@@ -1,6 +1,6 @@
 {
   "name": "react-spa-prerender",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,9 +10,18 @@
     "react-spa-prerender": "./run.js"
   },
   "author": "serhiypavlov33@gmail.com",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
     "puppeteer": "^8.0.0"
-  }
+  },
+  "keywords": [
+    "react",
+    "react-prerender",
+    "react-snapshot",
+    "react-static",
+    "prerender",
+    "react-snap",
+    "snapshot"
+  ]
 }

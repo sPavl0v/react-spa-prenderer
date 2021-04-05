@@ -69,10 +69,9 @@ if (rootElement.hasChildNodes()) {
 That's it. After accomplishing all the steps above, run you build command and your prerendered files will be in your build directory.
 
 ## .rsp.json Options
-```
+
 |option | type | default | description |
 |-----|--------|------|---------|
 | routes(Required) | Array | - | An array of routes you want to parse and prerender into static html|
 | port | String | '3000' | port where prerendering server will be starting |
 | buildDirectory | String | './build' | a relative path to your build folder
-```
