@@ -1,6 +1,6 @@
 # react-spa-prerender
 The easiest way to prerender static pages, optimize SEO and build high performance for your React SPA.
-Build production-ready code just by adding few lines of code. [Example of usage with create-react-app](https://github.com/sPavl0v/react-spa-prenderer/examples/cra/)
+Build production-ready code just by adding few lines of code. [Example of usage with create-react-app](https://github.com/sPavl0v/react-spa-prenderer/tree/master/examples/cra)
 
 Follow the steps below:
 
