@@ -1,62 +1,78 @@
 const express = require('express');
-const serveStatic = require('serve-static');
+const fs = require('fs');
+var resolve = require('path').resolve
 const puppeteer = require('puppeteer');
 let app;
- 
-async function runStaticServer() {
+
+async function readOptionsFromFile() {
+  const config = await fs.readFileSync('./.rsp.json');
+  const options = JSON.parse(config.toString());
+  return options;
+}
+
+async function runStaticServer(port, routes, dir) {
   try {
-    const app = express(); 
-    app.use(serveStatic('./build')); // , { 'index': ['default.html', 'default.htm'] }
-    await app.listen(3000);
-    console.log('server is running');
-    return 'http://localhost:3000';
+    app = express();
+    const resolvedPath = resolve(dir); 
+    app.use(express.static(resolvedPath));
+    routes.forEach(route => {
+      app.get(route, (req, res) => {
+        res.sendFile(`${resolvedPath}/index.html`);
+      })
+    })
+
+    await app.listen(port);
+    return `http://localhost:${port}`;
   } catch(err) {
     return false;
   }
 }
 
-async function runPuppeteer(url) {
-  console.log('runPuppeteer');
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-
-  await page.goto(url, {waitUntil: 'networkidle0'});
-  // await page.waitForNavigation();
-  
-
-  console.log('load HTML');
-  const html = await page.content(); // serialized HTML of page DOM.
-  console.log('html', html);
-
-  await browser.close();
-  return html;
-} 
-
-function stopStaticServer() {
-  app.close();
+async function createNewHTMLPage(route, html, dir) {
+  const fname = route === '/' ? 'index' : route;
+  await fs.writeFileSync(`${dir}/${fname}.html`, html, {encoding: 'utf-8', flag: 'w'});
+  console.log(`Created ${fname}.html`);
 }
 
+async function getHTMLfromPuppeteerPage(browser, pageUrl) {
+  const page = await browser.newPage();
+  await page.goto(pageUrl, {waitUntil: 'networkidle0'});
+  const html = await page.content();
+  if (!html) return 0;
+  return html;
+}
+
+async function runPuppeteer(baseUrl, routes, dir) {
+  console.log('runPuppeteer');
+  const browser = await puppeteer.launch();
+  for (let i = 0; i < routes.length; i++) {
+    try {
+      console.log(`Processing route "${routes[i]}"`);
+      const html = await getHTMLfromPuppeteerPage(browser, `${baseUrl}${routes[i]}`);
+      if (html) createNewHTMLPage(routes[i], html);
+      else return 0;
+    } catch (err) {
+      console.error(`Error: Failed to process route "${routes[i]}"`);
+      console.error(`Message: ${err}`);
+      return 0;
+    }
+  }
+
+  await browser.close();
+  return;
+} 
+
 async function run() {
-  const staticServerURL = await runStaticServer();
+  const options = await readOptionsFromFile();
+  const staticServerURL = await runStaticServer(options.port || 3000, options.routes, options.buildDirectory || './build');
 
   if (!staticServerURL) return 0;
 
-  const html = await runPuppeteer(staticServerURL);
-  if (html) {
-    stopStaticServer();
-  }
+  await runPuppeteer(staticServerURL, options.routes, options.buildDirectory || './build');
+  console.log('Finish react-spa-prerender tasks!');
+  process.exit();
 }
    
 module.exports = {
   run
 }
-
-  // await page.setRequestInterception(true);
-  // page.on('request', async (req) => {
-  //   console.log('req', req._url);
-  //   await req.continue();
-  // })
-  // page.on('response', async (response) => {
-  //   const res = await response.url();
-  //   return res;
-  // });
