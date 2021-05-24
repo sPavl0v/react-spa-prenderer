@@ -1,15 +1,28 @@
 const express = require('express');
 const fs = require('fs');
-var resolve = require('path').resolve
+const resolve = require('path').resolve;
 const puppeteer = require('puppeteer');
 let app;
 
+/**
+ * @returns {object}
+ */
 async function readOptionsFromFile() {
-  const config = await fs.readFileSync('./.rsp.json');
-  const options = JSON.parse(config.toString());
-  return options;
+  try {
+    const config = await fs.readFileSync('./.rsp.json');
+    const options = JSON.parse(config.toString());
+    return options;
+  } catch (err) {
+    throw new Error(`Error: Failed to read options from '.rsp.json'.\nMessage: ${err}`);
+  }
 }
 
+/**
+ * @param {number} port 
+ * @param {string} routes 
+ * @param {string} dir 
+ * @returns {string|boolean}
+ */
 async function runStaticServer(port, routes, dir) {
   try {
     app = express();
@@ -24,37 +37,58 @@ async function runStaticServer(port, routes, dir) {
     await app.listen(port);
     return `http://localhost:${port}`;
   } catch(err) {
-    return false;
+    throw new Error(`Error: Failed to run puppeteer server on port ${port}.\nMessage: ${err}`);
   }
 }
 
+/**
+ * 
+ * @param {string} route 
+ * @param {string} html 
+ * @param {string} dir 
+ */
 async function createNewHTMLPage(route, html, dir) {
   const fname = route === '/' ? 'index' : route;
   await fs.writeFileSync(`${dir}/${fname}.html`, html, {encoding: 'utf-8', flag: 'w'});
   console.log(`Created ${fname}.html`);
 }
 
+/**
+ * @param {object} browser 
+ * @param {string} pageUrl 
+ * @returns {string|number}
+ */
 async function getHTMLfromPuppeteerPage(browser, pageUrl) {
-  const page = await browser.newPage();
-  await page.goto(pageUrl, {waitUntil: 'networkidle0'});
-  const html = await page.content();
-  if (!html) return 0;
-  return html;
+  try {
+    const page = await browser.newPage();
+    
+    await page.goto(pageUrl, {waitUntil: 'networkidle0'});
+
+    const html = await page.content();
+    if (!html) return 0;
+    
+    return html;
+  } catch(err) {
+    throw new Error(`Error: Failed to build HTML for ${pageUrl}.\nMessage: ${err}`);
+  }
 }
 
+/**
+ * @param {string} baseUrl 
+ * @param {string[]} routes 
+ * @param {string} dir 
+ * @returns {number|undefined}
+ */
 async function runPuppeteer(baseUrl, routes, dir) {
-  console.log('runPuppeteer');
   const browser = await puppeteer.launch();
   for (let i = 0; i < routes.length; i++) {
     try {
       console.log(`Processing route "${routes[i]}"`);
       const html = await getHTMLfromPuppeteerPage(browser, `${baseUrl}${routes[i]}`);
-      if (html) createNewHTMLPage(routes[i], html);
+      if (html) createNewHTMLPage(routes[i], html, dir);
       else return 0;
     } catch (err) {
-      console.error(`Error: Failed to process route "${routes[i]}"`);
-      console.error(`Message: ${err}`);
-      return 0;
+      throw new Error(`Error: Failed to process route "${routes[i]}"\nMessage: ${err}`);
     }
   }
 
@@ -64,7 +98,7 @@ async function runPuppeteer(baseUrl, routes, dir) {
 
 async function run() {
   const options = await readOptionsFromFile();
-  const staticServerURL = await runStaticServer(options.port || 3000, options.routes, options.buildDirectory || './build');
+  const staticServerURL = await runStaticServer(options.port || 3000, options.routes || [], options.buildDirectory || './build');
 
   if (!staticServerURL) return 0;
 

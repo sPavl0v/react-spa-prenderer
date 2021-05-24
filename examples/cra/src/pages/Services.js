@@ -9,7 +9,7 @@ const Services = () => {
         <meta name="description" content="services" />
         <meta name="robots" content="INDEX,FOLLOW" />
       </Helmet>
-      <h2>Privacy Policy page</h2>
+      <h2>Services page</h2>
     </>
   )
 }

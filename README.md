@@ -1,6 +1,8 @@
 # react-spa-prerender
 The easiest way to prerender static pages, optimize SEO and build high performance for your React SPA.
-Build production-ready code just by adding few lines of code. [Example of usage with create-react-app](https://github.com/sPavl0v/react-spa-prenderer/tree/master/examples/cra)
+Build production-ready code just by adding few lines of code.
+* [Example of usage with create-react-app](https://github.com/sPavl0v/react-spa-prenderer/tree/master/examples/cra)
+* [create-react-app + lazy loading](https://github.com/sPavl0v/react-spa-prenderer/tree/master/examples/cra-lazy)
 
 Follow the steps below:
 
@@ -73,5 +75,5 @@ That's it. After accomplishing all the steps above, run you build command and yo
 |option | type | default | description |
 |-----|--------|------|---------|
 | routes(Required) | Array | - | An array of routes you want to parse and prerender into static html|
-| port | String | '3000' | port where prerendering server will be starting |
+| port | Number | 3000 | port where prerendering server will be starting |
 | buildDirectory | String | './build' | a relative path to your build folder
