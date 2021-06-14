@@ -48,9 +48,30 @@ async function runStaticServer(port, routes, dir) {
  * @param {string} dir 
  */
 async function createNewHTMLPage(route, html, dir) {
-  const fname = route === '/' ? 'index' : route;
-  await fs.writeFileSync(`${dir}/${fname}.html`, html, {encoding: 'utf-8', flag: 'w'});
-  console.log(`Created ${fname}.html`);
+  try {
+    const fname = route === '/' ? 'index' : route;
+    if (route.indexOf('/') !== route.lastIndexOf('/')) {
+      const subDir = route.slice(0, route.lastIndexOf('/'));
+      await ensureDirExists(`${dir}${subDir}`);
+    }
+    await fs.writeFileSync(`${dir}${fname}.html`, html, {encoding: 'utf-8', flag: 'w'});
+    console.log(`Created ${fname}.html`);
+  } catch (err) {
+    throw new Error(`Error: Failed to create HTML page for ${route}.\nMessage: ${err}`);
+  }
+}
+
+/**
+ * 
+ * @param {string} dir 
+ * @returns {Promise}
+ */
+function ensureDirExists(dir) {
+  try {
+    return fs.mkdirSync(dir, {recursive: true});
+  } catch (err) {
+    throw new Error(`Error: Failed to create directory for path ${dir}.\nMessage: ${err}`);
+  }
 }
 
 /**

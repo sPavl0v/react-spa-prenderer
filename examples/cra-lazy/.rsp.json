@@ -4,6 +4,8 @@
   "routes": [
     "/",
     "/about",
-    "/services"
+    "/services",
+    "/blog/article1",
+    "/blog/article2"
   ]
 }

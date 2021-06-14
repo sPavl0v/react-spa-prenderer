@@ -4,6 +4,10 @@ Build production-ready code just by adding few lines of code.
 * [Example of usage with create-react-app](https://github.com/sPavl0v/react-spa-prenderer/tree/master/examples/cra)
 * [create-react-app + lazy loading](https://github.com/sPavl0v/react-spa-prenderer/tree/master/examples/cra-lazy)
 
+### Upcoming features
+* Auto sitemap generation
+* Prebuilding pages with dynamic routes
+
 Follow the steps below:
 
 ## Install
@@ -34,14 +38,16 @@ Example:
         "/",
         "/about",
         "/services"
+        "/blog/article1"
         ...
     ]
 }
 ```
 From example above:
-Your "/" route will transform into "index.html" page.
-"/about" -> "index.html"
-"/services" -> "services.html"
+Your "/" route will transform into "index.html" page.  
+"/about" -> "about.html"  
+"/services" -> "services.html"  
+"/blog/article1" -> create blog directory with file "article1.html" ("/blog/article1.html")
 and so on...
 
 __The rest of the .rsp.json options described below__
