@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const resolve = require('path').resolve;
 const puppeteer = require('puppeteer');
+const normalizeRspOptions = require('./utils/normalizeRspOptions');
 let app;
 
 /**
@@ -10,7 +11,7 @@ let app;
 async function readOptionsFromFile() {
   try {
     const config = await fs.readFileSync('./.rsp.json');
-    const options = JSON.parse(config.toString());
+    const options = normalizeRspOptions(JSON.parse(config.toString()));
     return options;
   } catch (err) {
     throw new Error(`Error: Failed to read options from '.rsp.json'.\nMessage: ${err}`);
@@ -49,7 +50,7 @@ async function runStaticServer(port, routes, dir) {
  */
 async function createNewHTMLPage(route, html, dir) {
   try {
-    const fname = route === '/' ? 'index' : route;
+    const fname = route === '/' ? '/index' : route;
     if (route.indexOf('/') !== route.lastIndexOf('/')) {
       const subDir = route.slice(0, route.lastIndexOf('/'));
       await ensureDirExists(`${dir}${subDir}`);
@@ -98,10 +99,11 @@ async function getHTMLfromPuppeteerPage(browser, pageUrl) {
  * @param {string} baseUrl 
  * @param {string[]} routes 
  * @param {string} dir 
+ * @param {object} engine
  * @returns {number|undefined}
  */
-async function runPuppeteer(baseUrl, routes, dir) {
-  const browser = await puppeteer.launch();
+async function runPuppeteer(baseUrl, routes, dir, engine) {
+  const browser = await puppeteer.launch(engine.launchOptions);
   for (let i = 0; i < routes.length; i++) {
     try {
       console.log(`Processing route "${routes[i]}"`);
@@ -115,15 +117,15 @@ async function runPuppeteer(baseUrl, routes, dir) {
 
   await browser.close();
   return;
-} 
+}
 
 async function run() {
   const options = await readOptionsFromFile();
-  const staticServerURL = await runStaticServer(options.port || 3000, options.routes || [], options.buildDirectory || './build');
+  const staticServerURL = await runStaticServer(options.port, options.routes, options.buildDirectory);
 
   if (!staticServerURL) return 0;
 
-  await runPuppeteer(staticServerURL, options.routes, options.buildDirectory || './build');
+  await runPuppeteer(staticServerURL, options.routes, options.buildDirectory, options.engine);
   console.log('Finish react-spa-prerender tasks!');
   process.exit();
 }

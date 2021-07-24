@@ -83,3 +83,31 @@ That's it. After accomplishing all the steps above, run you build command and yo
 | routes(Required) | Array | - | An array of routes you want to parse and prerender into static html|
 | port | Number | 3000 | port where prerendering server will be starting |
 | buildDirectory | String | './build' | a relative path to your build folder
+|engine | Object | {} | params for Puppeteer engine, list of available params described below
+
+
+### Engine options:
+- launchOptions - object, containing properties to control **puppeteer.launch()** command. The whole list of available properties available here: [https://pptr.dev/#?product=Puppeteer&version=v10.0.0&show=api-puppeteerlaunchoptions](https://pptr.dev/#?product=Puppeteer&version=v10.0.0&show=api-puppeteerlaunchoptions)
+
+#### Example of .rsp.json with engine options:
+```
+{
+  "port": 3000,
+  "buildDirectory": "./build",
+  "engine": {
+    "launchOptions": {
+      "args": ["--no-sandbox", "--disable-setuid-sandbox"],
+      "product": "chrome",
+      "headless": true,
+      "ignoreHTTPSErrors": true
+    }
+  },
+  "routes": [
+    "/",
+    "/about",
+    "/services",
+    "/blog/article1",
+    "/blog/article2"
+  ]
+}
+```
