@@ -2,7 +2,11 @@ const express = require('express');
 const fs = require('fs');
 const resolve = require('path').resolve;
 const puppeteer = require('puppeteer');
-const normalizeRspOptions = require('./utils/normalizeRspOptions');
+const {
+  normalizeRspOptions,
+  ensureDirExists,
+  getValidatedFileName,
+} = require('./utils');
 let app;
 
 /**
@@ -50,28 +54,17 @@ async function runStaticServer(port, routes, dir) {
  */
 async function createNewHTMLPage(route, html, dir) {
   try {
-    const fname = route === '/' ? '/index' : route;
     if (route.indexOf('/') !== route.lastIndexOf('/')) {
       const subDir = route.slice(0, route.lastIndexOf('/'));
       await ensureDirExists(`${dir}${subDir}`);
     }
-    await fs.writeFileSync(`${dir}${fname}.html`, html, {encoding: 'utf-8', flag: 'w'});
-    console.log(`Created ${fname}.html`);
+
+    const fileName = getValidatedFileName(route);
+
+    await fs.writeFileSync(`${dir}${fileName}`, html, {encoding: 'utf-8', flag: 'w'});
+    console.log(`Created ${fileName}`);
   } catch (err) {
     throw new Error(`Error: Failed to create HTML page for ${route}.\nMessage: ${err}`);
-  }
-}
-
-/**
- * 
- * @param {string} dir 
- * @returns {Promise}
- */
-function ensureDirExists(dir) {
-  try {
-    return fs.mkdirSync(dir, {recursive: true});
-  } catch (err) {
-    throw new Error(`Error: Failed to create directory for path ${dir}.\nMessage: ${err}`);
   }
 }
 
