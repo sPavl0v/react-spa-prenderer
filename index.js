@@ -23,15 +23,15 @@ async function readOptionsFromFile() {
 }
 
 /**
- * @param {number} port 
- * @param {string} routes 
- * @param {string} dir 
+ * @param {number} port
+ * @param {string} routes
+ * @param {string} dir
  * @returns {string|boolean}
  */
 async function runStaticServer(port, routes, dir) {
   try {
     app = express();
-    const resolvedPath = resolve(dir); 
+    const resolvedPath = resolve(dir);
     app.use(express.static(resolvedPath));
     routes.forEach(route => {
       app.get(route, (req, res) => {
@@ -47,10 +47,10 @@ async function runStaticServer(port, routes, dir) {
 }
 
 /**
- * 
- * @param {string} route 
- * @param {string} html 
- * @param {string} dir 
+ *
+ * @param {string} route
+ * @param {string} html
+ * @param {string} dir
  */
 async function createNewHTMLPage(route, html, dir) {
   try {
@@ -69,19 +69,20 @@ async function createNewHTMLPage(route, html, dir) {
 }
 
 /**
- * @param {object} browser 
- * @param {string} pageUrl 
+ * @param {object} browser
+ * @param {string} pageUrl
+ * @param {object} options
  * @returns {string|number}
  */
-async function getHTMLfromPuppeteerPage(browser, pageUrl) {
+async function getHTMLfromPuppeteerPage(browser, pageUrl, options) {
   try {
     const page = await browser.newPage();
-    
-    await page.goto(pageUrl, {waitUntil: 'networkidle0'});
+
+    await page.goto(pageUrl, Object.assign({waitUntil: 'networkidle0'}, options));
 
     const html = await page.content();
     if (!html) return 0;
-    
+
     return html;
   } catch(err) {
     throw new Error(`Error: Failed to build HTML for ${pageUrl}.\nMessage: ${err}`);
@@ -89,9 +90,9 @@ async function getHTMLfromPuppeteerPage(browser, pageUrl) {
 }
 
 /**
- * @param {string} baseUrl 
- * @param {string[]} routes 
- * @param {string} dir 
+ * @param {string} baseUrl
+ * @param {string[]} routes
+ * @param {string} dir
  * @param {object} engine
  * @returns {number|undefined}
  */
@@ -100,7 +101,7 @@ async function runPuppeteer(baseUrl, routes, dir, engine) {
   for (let i = 0; i < routes.length; i++) {
     try {
       console.log(`Processing route "${routes[i]}"`);
-      const html = await getHTMLfromPuppeteerPage(browser, `${baseUrl}${routes[i]}`);
+      const html = await getHTMLfromPuppeteerPage(browser, `${baseUrl}${routes[i]}`, engine.gotoOptions);
       if (html) createNewHTMLPage(routes[i], html, dir);
       else return 0;
     } catch (err) {
@@ -122,7 +123,7 @@ async function run() {
   console.log('Finish react-spa-prerender tasks!');
   process.exit();
 }
-   
+
 module.exports = {
   run
 }
