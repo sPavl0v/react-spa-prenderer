@@ -3,8 +3,10 @@ module.exports = function (options) {
 
   if (options.engine) {
     engine.launchOptions = options.engine.launchOptions || {};
+    engine.gotoOptions = options.engine.gotoOptions || {};
   } else {
     engine.launchOptions = {};
+    engine.gotoOptions = {};
   }
 
   return {

@@ -44,15 +44,15 @@ Example:
 }
 ```
 From example above:
-Your "/" route will transform into "index.html" page.  
-"/about" -> "about.html"  
-"/services" -> "services.html"  
+Your "/" route will transform into "index.html" page.
+"/about" -> "about.html"
+"/services" -> "services.html"
 "/blog/article1" -> create blog directory with file "article1.html" ("/blog/article1.html")
 and so on...
 
 __The rest of the .rsp.json options described below__
 
-## Add ReactDOM.hydrate in your index.js 
+## Add ReactDOM.hydrate in your index.js
 In your index.js(main app file) change the ReactDOM.render logic:
 ```
 import ReactDOM from 'react-dom';
@@ -88,6 +88,8 @@ That's it. After accomplishing all the steps above, run you build command and yo
 
 ### Engine options:
 - launchOptions - object, containing properties to control **puppeteer.launch()** command. The whole list of available properties available here: [https://pptr.dev/#?product=Puppeteer&version=v10.0.0&show=api-puppeteerlaunchoptions](https://pptr.dev/#?product=Puppeteer&version=v10.0.0&show=api-puppeteerlaunchoptions)
+- gotoOptions - object, navigation parameters. The whole list of available properties available here: [https://pptr.dev/#?product=Puppeteer&version=v10.0.0&show=api-pagegotourl-options](https://pptr.dev/#?product=Puppeteer&version=v10.0.0&show=api-pagegotourl-options)
+
 
 #### Example of .rsp.json with engine options:
 ```
@@ -100,6 +102,9 @@ That's it. After accomplishing all the steps above, run you build command and yo
       "product": "chrome",
       "headless": true,
       "ignoreHTTPSErrors": true
+    },
+    "gotoOptions": {
+      "timeout": 0
     }
   },
   "routes": [
