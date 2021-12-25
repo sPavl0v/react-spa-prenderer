@@ -41,6 +41,6 @@
     ]
   },
   "devDependencies": {
-    "react-spa-prerender": "^1.0.12"
+    "react-spa-prerender": "^1.0.13"
   }
 }
