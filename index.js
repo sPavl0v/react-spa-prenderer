@@ -96,8 +96,8 @@ async function runPuppeteer(baseUrl, routes, dir) {
   return;
 } 
 
-async function run() {
-  const options = await readOptionsFromFile();
+async function run(config) {
+  const options = config || await readOptionsFromFile();
   const staticServerURL = await runStaticServer(options.port || 3000, options.routes || [], options.buildDirectory || './build');
 
   if (!staticServerURL) return 0;
