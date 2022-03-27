@@ -83,7 +83,8 @@ That's it. After accomplishing all the steps above, run you build command and yo
 | routes(Required) | Array | - | An array of routes you want to parse and prerender into static html|
 | port | Number | 3000 | port where prerendering server will be starting |
 | buildDirectory | String | './build' | a relative path to your build folder
-|engine | Object | {} | params for Puppeteer engine, list of available params described below
+| outputDirectory | String | './build' | a relative path to the folder for the output files
+| engine | Object | {} | params for Puppeteer engine, list of available params described below
 
 
 ### Engine options:
