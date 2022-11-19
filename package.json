@@ -1,6 +1,6 @@
 {
   "name": "react-spa-prerender",
-  "version": "1.0.14",
+  "version": "1.0.15.alpha2",
   "description": "React library for prerendering static pages, optimize SEO and web performance",
   "main": "index.js",
   "scripts": {
