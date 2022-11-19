@@ -136,7 +136,7 @@ That's it. After accomplishing all the steps above, run you build command and yo
     "?type=a",
     "?type=b",
     "",
-    "?demo=yes"
+    "?demo=yes&tester=yes"
   ]
 }
 ```
