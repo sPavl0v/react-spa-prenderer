@@ -96,17 +96,19 @@ async function getHTMLfromPuppeteerPage(browser, pageUrl, options) {
  * @param {object} engine
  * @returns {number|undefined}
  */
-async function runPuppeteer(baseUrl, routes, params, dir, engine) {
+ async function runPuppeteer(baseUrl, routes, params, dir, engine) {
   const browser = await puppeteer.launch(engine.launchOptions);
   for (let i = 0; i < routes.length; i++) {
+    const parameters = params[i] || "";
+    console.log(`Processing route "${routes[i]}${parameters}"`);
+    if (parameters && !parameters.startsWith("?")) throw new Error(`Error: Failed to process parameters "${routes[i]}${parameters}"\nMessage: URL Parameters can be blank or must start with "?"`);
+
     try {
-      console.log(`Processing route "${routes[i]}"`);
-      const parameters = params[i] || "";
       const html = await getHTMLfromPuppeteerPage(browser, `${baseUrl}${routes[i]}${parameters}`, engine.gotoOptions);
       if (html) createNewHTMLPage(routes[i], html, dir);
       else return 0;
     } catch (err) {
-      throw new Error(`Error: Failed to process route "${routes[i]}"\nMessage: ${err}`);
+      throw new Error(`Error: Failed to process route "${routes[i]}${parameters}"\nMessage: ${err}`);
     }
   }
 
