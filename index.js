@@ -118,11 +118,11 @@ async function getHTMLfromPuppeteerPage(browser, pageUrl, options) {
 
 async function run(config) {
   const options = config || await readOptionsFromFile();
-  const staticServerURL = await runStaticServer(options.port, options.routes, options.urlParameter, options.buildDirectory);
+  const staticServerURL = await runStaticServer(options.port, options.routes, options.urlParameters, options.buildDirectory);
 
   if (!staticServerURL) return 0;
 
-  await runPuppeteer(staticServerURL, options.routes, options.urlParameter, options.buildDirectory, options.engine);
+  await runPuppeteer(staticServerURL, options.routes, options.urlParameters, options.buildDirectory, options.engine);
   console.log('Finish react-spa-prerender tasks!');
   process.exit();
 }
