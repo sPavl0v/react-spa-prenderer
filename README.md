@@ -95,13 +95,13 @@ That's it. After accomplishing all the steps above, run you build command and yo
 
 ## .rsp.json Options
 
-| option                 | type   | default   | description                                                           |
-| ---------------------- | ------ | --------- | --------------------------------------------------------------------- |
-| routes(Required)       | Array  | -         | An array of routes you want to parse and prerender into static html   |
+| option                  | type   | default   | description                                                           |
+| ----------------------- | ------ | --------- | --------------------------------------------------------------------- |
+| routes(Required)        | Array  | -         | An array of routes you want to parse and prerender into static html   |
 | urlParameters(Optional) | Array  | -         | An array of URL Parameter you want to pass along with Route           |
-| port                   | Number | 3000      | port where prerendering server will be starting                       |
-| buildDirectory         | String | './build' | a relative path to your build folder                                  |
-| engine                 | Object | {}        | params for Puppeteer engine, list of available params described below |
+| port                    | Number | 3000      | port where prerendering server will be starting                       |
+| buildDirectory          | String | './build' | a relative path to your build folder                                  |
+| engine                  | Object | {}        | params for Puppeteer engine, list of available params described below |
 
 ### Engine options:
 
