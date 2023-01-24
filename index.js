@@ -28,7 +28,7 @@ async function readOptionsFromFile() {
  * @param {string} dir
  * @returns {string|boolean}
  */
-async function runStaticServer(port, routes, dir) {
+async function runStaticServer(port, routes, params, dir) {
   try {
     app = express();
     const resolvedPath = resolve(dir);
@@ -41,7 +41,7 @@ async function runStaticServer(port, routes, dir) {
 
     await app.listen(port);
     return `http://localhost:${port}`;
-  } catch(err) {
+  } catch (err) {
     throw new Error(`Error: Failed to run puppeteer server on port ${port}.\nMessage: ${err}`);
   }
 }
@@ -61,7 +61,7 @@ async function createNewHTMLPage(route, html, dir) {
 
     const fileName = getValidatedFileName(route);
 
-    await fs.writeFileSync(`${dir}${fileName}`, html, {encoding: 'utf-8', flag: 'w'});
+    await fs.writeFileSync(`${dir}${fileName}`, html, { encoding: 'utf-8', flag: 'w' });
     console.log(`Created ${fileName}`);
   } catch (err) {
     throw new Error(`Error: Failed to create HTML page for ${route}.\nMessage: ${err}`);
@@ -78,13 +78,13 @@ async function getHTMLfromPuppeteerPage(browser, pageUrl, options) {
   try {
     const page = await browser.newPage();
 
-    await page.goto(pageUrl, Object.assign({waitUntil: 'networkidle0'}, options));
+    await page.goto(pageUrl, Object.assign({ waitUntil: 'networkidle0' }, options));
 
     const html = await page.content();
     if (!html) return 0;
 
     return html;
-  } catch(err) {
+  } catch (err) {
     throw new Error(`Error: Failed to build HTML for ${pageUrl}.\nMessage: ${err}`);
   }
 }
@@ -96,16 +96,19 @@ async function getHTMLfromPuppeteerPage(browser, pageUrl, options) {
  * @param {object} engine
  * @returns {number|undefined}
  */
-async function runPuppeteer(baseUrl, routes, dir, engine) {
+ async function runPuppeteer(baseUrl, routes, params, dir, engine) {
   const browser = await puppeteer.launch(engine.launchOptions);
   for (let i = 0; i < routes.length; i++) {
+    const parameters = params[i] || "";
+    console.log(`Processing route "${routes[i]}${parameters}"`);
+    if (parameters && !parameters.startsWith("?")) throw new Error(`Error: Failed to process parameters "${routes[i]}${parameters}"\nMessage: URL Parameters can be blank or must start with "?"`);
+
     try {
-      console.log(`Processing route "${routes[i]}"`);
-      const html = await getHTMLfromPuppeteerPage(browser, `${baseUrl}${routes[i]}`, engine.gotoOptions);
+      const html = await getHTMLfromPuppeteerPage(browser, `${baseUrl}${routes[i]}${parameters}`, engine.gotoOptions);
       if (html) createNewHTMLPage(routes[i], html, dir);
       else return 0;
     } catch (err) {
-      throw new Error(`Error: Failed to process route "${routes[i]}"\nMessage: ${err}`);
+      throw new Error(`Error: Failed to process route "${routes[i]}${parameters}"\nMessage: ${err}`);
     }
   }
 
@@ -115,11 +118,11 @@ async function runPuppeteer(baseUrl, routes, dir, engine) {
 
 async function run(config) {
   const options = config || await readOptionsFromFile();
-  const staticServerURL = await runStaticServer(options.port, options.routes, options.buildDirectory);
+  const staticServerURL = await runStaticServer(options.port, options.routes, options.urlParameters, options.buildDirectory);
 
   if (!staticServerURL) return 0;
 
-  await runPuppeteer(staticServerURL, options.routes, options.buildDirectory, options.engine);
+  await runPuppeteer(staticServerURL, options.routes, options.urlParameters, options.buildDirectory, options.engine);
   console.log('Finish react-spa-prerender tasks!');
   process.exit();
 }

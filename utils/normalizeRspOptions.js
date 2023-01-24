@@ -11,6 +11,7 @@ module.exports = function (options) {
 
   return {
     routes: options.routes || [],
+    urlParameters: options.urlParameters || [],
     port: options.port || 3000,
     buildDirectory: options.buildDirectory || './build',
     engine
