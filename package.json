@@ -1,0 +1,42 @@
+{
+  "name": "react-spa-prerender",
+  "version": "1.0.14",
+  "description": "React library for prerendering static pages, optimize SEO and web performance",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "react-spa-prerender": "./run.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sPavl0v/react-spa-prenderer"
+  },
+  "files": [
+    "index.js",
+    "run.js",
+    "utils"
+  ],
+  "author": "serhiypavlov33@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "puppeteer": "10.4.0"
+  },
+  "keywords": [
+    "react",
+    "react-prerender",
+    "react-snapshot",
+    "react-static",
+    "react-prebuild",
+    "prebuild",
+    "react static",
+    "react static site generator",
+    "ssg",
+    "react-ssg",
+    "prerender",
+    "react-snap",
+    "snapshot"
+  ]
+}
