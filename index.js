@@ -81,6 +81,8 @@ async function getHTMLfromPuppeteerPage(browser, pageUrl, options) {
     await page.goto(pageUrl, Object.assign({waitUntil: 'networkidle0'}, options));
 
     const html = await page.content();
+
+    await page.close();
     if (!html) return 0;
 
     return html;
